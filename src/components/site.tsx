@@ -35,7 +35,7 @@ export function Header() {
           </Link>
           <nav aria-label="التنقل الرئيسي">
             <Link href="/catalog">الفهرس العلمي</Link>
-            <Link href="/catalog?status=مسجل">الموضوعات المسجلة</Link>
+            <Link href="/catalog?status=قيد الإعداد">أعمال قيد الإعداد</Link>
             <Link href="/about">عن المنصة</Link>
           </nav>
           <Link href="/account" className="button button-outline header-login">
@@ -80,9 +80,11 @@ export function Footer() {
 export function DemoNotice({
   demo,
   available = true,
+  publishedAt,
 }: {
   demo: boolean;
   available?: boolean;
+  publishedAt?: string;
 }) {
   return demo ? (
     <div className="notice demo-notice">
@@ -93,6 +95,16 @@ export function DemoNotice({
   ) : !available ? (
     <div className="notice" role="alert">
       خدمة الفهرس الجامعي غير متاحة حاليًا. يرجى المحاولة لاحقًا.
+    </div>
+  ) : publishedAt ? (
+    <div className="notice">
+      آخر تحديث للفهرس:{" "}
+      {new Intl.DateTimeFormat("ar-SA", {
+        dateStyle: "medium",
+        calendar: "gregory",
+        timeZone: "Asia/Riyadh",
+      }).format(new Date(publishedAt))}
+      . تُضاف النصوص الكاملة تدريجيًا بعد اعتمادها.
     </div>
   ) : null;
 }

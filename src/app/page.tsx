@@ -27,6 +27,7 @@ export default async function Home() {
       <DemoNotice
         demo={catalog.source === "demo"}
         available={catalog.available}
+        publishedAt={catalog.publishedAt}
       />
       <section className="hero">
         <div className="container hero-layout">

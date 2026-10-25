@@ -55,6 +55,7 @@ export function publicRecord(f: Record<string, unknown>): Thesis | null {
     supervisor = text(f.SupervisorName),
     department = text(f.Department);
   const year = Number(f.Year),
+    calendar = text(f.YearCalendar) || "gregorian",
     degree = text(f.Degree),
     kind = text(f.WorkType),
     status = text(f.AcademicStatus),
@@ -65,14 +66,16 @@ export function publicRecord(f: Record<string, unknown>): Thesis | null {
     !author ||
     !department ||
     !Number.isInteger(year) ||
-    year < 1900 ||
-    year > 2200
+    !["hijri", "gregorian"].includes(calendar) ||
+    (calendar === "hijri"
+      ? year < 1300 || year > 1600
+      : year < 1900 || year > 2200)
   )
     return null;
   if (
     !["ماجستير", "دكتوراه"].includes(degree) ||
-    !["رسالة علمية", "بحث تكميلي"].includes(kind) ||
-    !["مكتمل", "قيد الإعداد", "مسجل"].includes(status) ||
+    !["رسالة علمية", "بحث تكميلي", "غير محدد"].includes(kind) ||
+    !["مكتمل", "قيد الإعداد", "مسجل", "غير محدد"].includes(status) ||
     !["university", "metadata", "embargo"].includes(access)
   )
     return null;
@@ -84,6 +87,13 @@ export function publicRecord(f: Record<string, unknown>): Thesis | null {
     supervisor,
     department,
     year,
+    yearCalendar: calendar as Thesis["yearCalendar"],
+    ...(text(f.Specialization)
+      ? { specialization: text(f.Specialization) }
+      : {}),
+    ...(text(f.CoSupervisorName)
+      ? { coSupervisor: text(f.CoSupervisorName) }
+      : {}),
     degree: degree as Thesis["degree"],
     kind: kind as Thesis["kind"],
     status: status as Thesis["status"],

@@ -7,6 +7,7 @@ import {
   FileText,
 } from "lucide-react";
 import type { Thesis } from "@/lib/types";
+import { yearLabel, workLabel } from "@/lib/search";
 export function AccessBadge({ thesis }: { thesis: Thesis }) {
   return (
     <span className={`access-badge access-${thesis.access}`}>
@@ -46,11 +47,11 @@ export function ThesisCard({ thesis: t }: { thesis: Thesis }) {
       <div className="card-meta">
         <span>
           <CalendarDays size={14} />
-          {t.year}
+          {yearLabel(t)}
         </span>
         <span>
           <FileText size={14} />
-          {t.kind}
+          {workLabel(t)}
         </span>
       </div>
       <div className="card-bottom">

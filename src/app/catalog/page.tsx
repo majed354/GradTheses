@@ -11,6 +11,7 @@ export default async function CatalogPage() {
       <DemoNotice
         demo={catalog.source === "demo"}
         available={catalog.available}
+        publishedAt={catalog.publishedAt}
       />
       <Breadcrumb items={[{ label: "الفهرس العلمي" }]} />
       <div className="container page-heading">

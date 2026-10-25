@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { LockKeyhole, ArrowUpLeft } from "lucide-react";
-import { readingEnabled } from "@/lib/config";
+import { readingEnabled, nativeSharePointAuth } from "@/lib/config";
 import { getSession } from "@/lib/auth";
 export const dynamic = "force-dynamic";
 export const metadata = {
@@ -37,7 +37,23 @@ export default async function Account({
         </div>
       )}
       <div className="state-panel">
-        {session ? (
+        {nativeSharePointAuth() ? (
+          <>
+            <h2>الدخول عبر قارئ الجامعة</h2>
+            <p>
+              اختر عملًا متاحًا للقراءة من الفهرس. سيطلب SharePoint حسابك
+              الجامعي عند فتح النص، ويتحقق من صلاحية القراءة. لا تحتاج إلى إنشاء
+              حساب في المنصة.
+            </p>
+            <p>
+              تُرفع الملفات تدريجيًا؛ السجلات التي لم تُرفق نسخها تعرض بيانات
+              الموضوع فقط.
+            </p>
+            <Link href="/catalog" className="button button-primary">
+              استعراض الفهرس
+            </Link>
+          </>
+        ) : session ? (
           <>
             <h2>مرحبًا، {session.name}</h2>
             <p>يمكنك الانتقال إلى السجلات المتاحة للقراءة.</p>

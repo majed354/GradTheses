@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BookOpen, LockKeyhole, ArrowUpLeft, ShieldCheck } from "lucide-react";
 import { getCatalog } from "@/lib/catalog";
-import { readingEnabled } from "@/lib/config";
+import { readingEnabled, nativeSharePointAuth } from "@/lib/config";
 import { getSession } from "@/lib/auth";
 import { Breadcrumb } from "@/components/site";
 export const dynamic = "force-dynamic";
@@ -74,6 +74,23 @@ export default async function ReadPage({
               <p>
                 قد يكون رابط القراءة لم يُعتمد بعد. يرجى مراجعة مسؤول المستودع.
               </p>
+            </>
+          ) : nativeSharePointAuth() ? (
+            <>
+              <h2>اقرأ باستخدام حساب الجامعة</h2>
+              <p>
+                يفتح قارئ SharePoint في تبويب مستقل، ويتحقق من دخولك وصلاحيتك.
+                يُتاح الرابط بعد اعتماد نسخة القراءة ومنع تنزيلها.
+              </p>
+              <a
+                href={`/api/read/${id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="button button-primary"
+              >
+                <BookOpen size={17} /> فتح القارئ الجامعي{" "}
+                <ArrowUpLeft size={17} />
+              </a>
             </>
           ) : !session ? (
             <>

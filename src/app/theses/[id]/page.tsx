@@ -9,7 +9,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { getCatalog } from "@/lib/catalog";
-import { citation } from "@/lib/search";
+import { citation, yearLabel, workLabel } from "@/lib/search";
 import { Breadcrumb, DemoNotice } from "@/components/site";
 import { AccessBadge, ThesisCard } from "@/components/thesis-card";
 import { CopyCitation } from "@/components/citation";
@@ -49,7 +49,10 @@ export default async function ThesisPage({
     .slice(0, 3);
   return (
     <main id="main">
-      <DemoNotice demo={catalog.source === "demo"} />
+      <DemoNotice
+        demo={catalog.source === "demo"}
+        publishedAt={catalog.publishedAt}
+      />
       <Breadcrumb
         items={[
           { label: "الفهرس العلمي", href: "/catalog" },
@@ -71,13 +74,14 @@ export default async function ThesisPage({
             <span>بإشراف: {t.supervisor || "غير محدد"}</span>
           </div>
           <div className="detail-facts">
+            {t.specialization && <span>التخصص: {t.specialization}</span>}
             <span>
               <CalendarDays size={17} />
-              {t.year} م
+              {yearLabel(t)}
             </span>
             <span>
               <FileText size={17} />
-              {t.kind}
+              {workLabel(t)}
             </span>
             {t.pages && (
               <span>

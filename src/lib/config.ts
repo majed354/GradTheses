@@ -25,7 +25,14 @@ export function authConfigured() {
 export function readingEnabled() {
   return (
     process.env.READING_ENABLED === "true" &&
-    process.env.CATALOG_SOURCE === "sharepoint" &&
-    authConfigured()
+    (nativeSharePointAuth() ||
+      (process.env.CATALOG_SOURCE === "sharepoint" && authConfigured()))
+  );
+}
+export function nativeSharePointAuth() {
+  return (
+    process.env.READING_AUTH_MODE === "sharepoint" &&
+    process.env.CATALOG_SOURCE === "published" &&
+    process.env.SHAREPOINT_READING_HOST === "taifedusa.sharepoint.com"
   );
 }

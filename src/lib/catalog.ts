@@ -2,6 +2,17 @@ import "server-only";
 import { demoTheses } from "./demo";
 import { publicRecord, safeReadingUrl, canRead } from "./policy";
 import type { Catalog } from "./types";
+import { getStore } from "@netlify/blobs";
+import {
+  parsePublication,
+  PUBLICATION_STORE,
+  PUBLICATION_KEY,
+} from "./publication";
+async function publishedRows() {
+  // Production is never read by preview deployments, which explicitly use demo.
+  const store = getStore({ name: PUBLICATION_STORE, consistency: "strong" });
+  return parsePublication(await store.get(PUBLICATION_KEY, { type: "json" }));
+}
 let tokenCache: { token: string; until: number } | undefined;
 async function graphToken() {
   if (tokenCache && tokenCache.until > Date.now()) return tokenCache.token;
@@ -44,7 +55,7 @@ async function graphRows(): Promise<Record<string, unknown>[]> {
   if (!SHAREPOINT_SITE_ID || !SHAREPOINT_CATALOG_LIST_ID)
     throw new Error("Catalog configuration missing");
   const fields =
-    "ThesisId,Title,AuthorName,SupervisorName,Department,Degree,WorkType,Year,AcademicStatus,AbstractText,KeywordsText,PageCount,AccessLevel,EmbargoUntil,PublicationStatus,ReadingUrl";
+    "ThesisId,Title,AuthorName,SupervisorName,CoSupervisorName,Department,Specialization,Degree,WorkType,Year,YearCalendar,AcademicStatus,AbstractText,KeywordsText,PageCount,AccessLevel,EmbargoUntil,PublicationStatus,ReadingUrl";
   const initial = new URL(
     `https://graph.microsoft.com/v1.0/sites/${encodeURIComponent(SHAREPOINT_SITE_ID)}/lists/${encodeURIComponent(SHAREPOINT_CATALOG_LIST_ID)}/items`,
   );
@@ -90,6 +101,20 @@ export async function getCatalog(): Promise<Catalog> {
   const source = process.env.CATALOG_SOURCE || "demo";
   if (source === "demo")
     return { theses: demoTheses, source: "demo", available: true };
+  if (source === "published") {
+    try {
+      const publication = await publishedRows();
+      return {
+        theses: publication.rows.map(publicRecord).filter((t) => t !== null),
+        source: "published",
+        available: true,
+        publishedAt: publication.publishedAt,
+      };
+    } catch {
+      console.error("Published catalog unavailable.");
+      return { theses: [], source: "published", available: false };
+    }
+  }
   if (source !== "sharepoint")
     return { theses: [], source: "sharepoint", available: false };
   try {
@@ -106,6 +131,13 @@ export async function getCatalog(): Promise<Catalog> {
   }
 }
 export async function getReadingLink(id: string) {
+  if (process.env.CATALOG_SOURCE === "published") {
+    const row = (await publishedRows()).rows.find((r) => r.ThesisId === id);
+    const t = row && publicRecord(row);
+    return row && t && canRead(t) && row.DownloadBlocked === true
+      ? safeReadingUrl(row.ReadingUrl, process.env.SHAREPOINT_READING_HOST)
+      : null;
+  }
   if (process.env.CATALOG_SOURCE !== "sharepoint") return null;
   const matches = (await graphRows()).filter((f) => f.ThesisId === id);
   if (matches.length !== 1) return null;

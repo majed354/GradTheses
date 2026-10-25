@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as oidc from "openid-client";
 import { oidcConfig, sealCookie, FLOW_COOKIE, cookieOptions } from "@/lib/auth";
-import { appUrl, readingEnabled } from "@/lib/config";
+import { appUrl, readingEnabled, nativeSharePointAuth } from "@/lib/config";
 import { safeReturnPath } from "@/lib/policy";
 export async function GET(request: NextRequest) {
   const base = appUrl();
+  if (nativeSharePointAuth()) {
+    const next = safeReturnPath(request.nextUrl.searchParams.get("next"));
+    return NextResponse.redirect(
+      new URL(next === "/catalog" ? "/account" : next, base),
+    );
+  }
   if (!readingEnabled())
     return NextResponse.redirect(new URL("/account?notice=setup", base));
   try {

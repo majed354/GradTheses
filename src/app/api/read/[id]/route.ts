@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readingEnabled, appUrl } from "@/lib/config";
+import { readingEnabled, appUrl, nativeSharePointAuth } from "@/lib/config";
 import { getSession } from "@/lib/auth";
 import { getReadingLink } from "@/lib/catalog";
 export async function GET(
@@ -15,7 +15,9 @@ export async function GET(
       { error: "مسار القراءة الجامعية قيد التجهيز." },
       { status: 503, headers },
     );
-  if (!(await getSession()))
+  // Native mode delegates authentication and ACL enforcement to SharePoint.
+  // No PDF bytes or Microsoft tokens pass through this application.
+  if (!nativeSharePointAuth() && !(await getSession()))
     return Response.json(
       { error: "يلزم تسجيل الدخول بالحساب الجامعي المصرح له." },
       { status: 401, headers },

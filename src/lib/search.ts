@@ -17,6 +17,17 @@ export type Filters = {
   year?: string;
   sort?: string;
 };
+export function yearLabel(t: Thesis) {
+  return `${t.year} ${t.yearCalendar === "hijri" ? "هـ" : "م"}`;
+}
+export function workLabel(t: Thesis) {
+  return t.kind === "غير محدد" ? "عمل بحثي" : t.kind;
+}
+// Used only for ordering mixed-calendar year records, never as a date conversion.
+const yearOrder = (t: Thesis) =>
+  t.yearCalendar === "hijri"
+    ? 621.5774 + (t.year * 354.367) / 365.2425
+    : t.year;
 export function filterTheses(theses: Thesis[], filters: Filters) {
   const terms = normalizeArabic(filters.query || "")
     .split(/\s+/)
@@ -29,6 +40,8 @@ export function filterTheses(theses: Thesis[], filters: Filters) {
           t.author,
           t.supervisor,
           t.department,
+          t.specialization,
+          t.coSupervisor,
           t.abstract,
           ...t.keywords,
         ].join(" "),
@@ -39,17 +52,19 @@ export function filterTheses(theses: Thesis[], filters: Filters) {
         (!filters.degree || t.degree === filters.degree) &&
         (!filters.status || t.status === filters.status) &&
         (!filters.access || t.access === filters.access) &&
-        (!filters.year || String(t.year) === filters.year)
+        (!filters.year ||
+          String(t.year) === filters.year ||
+          yearLabel(t) === filters.year)
       );
     })
     .sort((a, b) =>
       filters.sort === "oldest"
-        ? a.year - b.year
+        ? yearOrder(a) - yearOrder(b)
         : filters.sort === "title"
           ? a.title.localeCompare(b.title, "ar")
-          : b.year - a.year,
+          : yearOrder(b) - yearOrder(a),
     );
 }
 export function citation(t: Thesis) {
-  return `${t.author}. (${t.year}). ${t.title} [${t.kind}، ${t.degree}]. كلية الشريعة والأنظمة، جامعة الطائف.`;
+  return `${t.author}. (${yearLabel(t)}). ${t.title} [${workLabel(t)}، ${t.degree}]. كلية الشريعة والأنظمة، جامعة الطائف.`;
 }

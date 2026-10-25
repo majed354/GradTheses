@@ -11,7 +11,7 @@ import {
   ArrowLeft,
   ArrowRight,
 } from "lucide-react";
-import { filterTheses, type Filters } from "@/lib/search";
+import { filterTheses, yearLabel, type Filters } from "@/lib/search";
 import { ThesisCard, AccessBadge } from "./thesis-card";
 import type { Thesis } from "@/lib/types";
 export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
@@ -72,11 +72,16 @@ export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
           ...new Set(theses.map((t) => t.department)),
         ])}
         {field("degree", "الدرجة العلمية", ["ماجستير", "دكتوراه"])}
-        {field("status", "الحالة الأكاديمية", ["مكتمل", "قيد الإعداد", "مسجل"])}
+        {field("status", "الحالة الأكاديمية", [
+          "مكتمل",
+          "قيد الإعداد",
+          "مسجل",
+          "غير محدد",
+        ])}
         {field(
           "year",
-          "السنة الميلادية",
-          [...new Set(theses.map((t) => String(t.year)))].sort().reverse(),
+          "السنة",
+          [...new Set(theses.map(yearLabel))].sort().reverse(),
         )}
         <label className="filter-field">
           إتاحة النص
@@ -201,7 +206,7 @@ export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
                     </td>
                     <td>{t.department}</td>
                     <td>{t.degree}</td>
-                    <td>{t.year}</td>
+                    <td>{yearLabel(t)}</td>
                     <td>
                       <AccessBadge thesis={t} />
                     </td>
