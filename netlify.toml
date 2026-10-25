@@ -1,0 +1,14 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "24"
+
+[context.deploy-preview.environment]
+  CATALOG_SOURCE = "demo"
+  READING_ENABLED = "false"
+
+[context.branch-deploy.environment]
+  CATALOG_SOURCE = "demo"
+  READING_ENABLED = "false"
