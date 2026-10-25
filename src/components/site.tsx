@@ -22,14 +22,19 @@ export function Header() {
       </div>
       <header className="header">
         <div className="container header-inner">
-          <Link href="/" className="brand" aria-label="الرئيسية — مداد">
+          <Link
+            href="/"
+            className="brand"
+            aria-label="الرئيسية — مداد كلية الشريعة والأنظمة"
+          >
             <span className="brand-mark">
               <BookOpen size={28} strokeWidth={1.5} />
             </span>
             <span>
               <strong>
-                مِداد<span className="brand-dot">.</span>
+                مداد<span className="brand-dot">.</span>
               </strong>
+              <span className="brand-college">كلية الشريعة والأنظمة</span>
               <small>بوابة بحوث ورسائل الدراسات العليا</small>
             </span>
           </Link>
@@ -53,7 +58,7 @@ export function Footer() {
       <div className="container footer-top">
         <div>
           <Link href="/" className="footer-brand">
-            <BookOpen size={22} /> مِداد
+            <BookOpen size={22} /> مداد كلية الشريعة والأنظمة
           </Link>
           <p>
             نافذة على المعرفة، وامتداد لأثر البحث العلمي.
@@ -71,7 +76,7 @@ export function Footer() {
         <GraduationCap className="footer-seal" size={78} strokeWidth={0.7} />
       </div>
       <div className="container footer-bottom">
-        <span>نسخة أولية للعرض والمراجعة · اسم «مداد» مقترح للمنصة</span>
+        <span>مداد كلية الشريعة والأنظمة · جامعة الطائف</span>
         <span>المعرفة متاحة. والحقوق محفوظة.</span>
       </div>
     </footer>

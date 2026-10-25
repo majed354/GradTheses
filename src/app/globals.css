@@ -136,6 +136,14 @@ h3 {
 .brand-dot {
   color: var(--gold);
 }
+.brand-college {
+  display: block;
+  color: var(--green);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-top: 3px;
+}
 .brand small {
   display: block;
   font-size: 10px;

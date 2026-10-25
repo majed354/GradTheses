@@ -7,9 +7,10 @@ import "./globals.css";
 import { Header, Footer } from "@/components/site";
 export const metadata: Metadata = {
   title: {
-    default: "مِداد | بحوث ورسائل الدراسات العليا",
-    template: "%s | مِداد",
+    default: "مداد كلية الشريعة والأنظمة | بحوث ورسائل الدراسات العليا",
+    template: "%s | مداد كلية الشريعة والأنظمة",
   },
+  applicationName: "مداد كلية الشريعة والأنظمة",
   description:
     "فهرس بحوث ورسائل الدراسات العليا بكلية الشريعة والأنظمة بجامعة الطائف. استعراض البيانات للجميع وقراءة النصوص للمصرح لهم بالحساب الجامعي.",
 };

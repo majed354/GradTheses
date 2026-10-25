@@ -1,4 +1,4 @@
-# إعداد SharePoint وMicrosoft Entra لمنصة مِداد
+# إعداد SharePoint وMicrosoft Entra لمنصة مداد كلية الشريعة والأنظمة
 
 الرابط: **https://gradtheses-taif.netlify.app**
 
@@ -37,7 +37,7 @@
 | Degree            | اختيار واحد                          | `ماجستير`، `دكتوراه`                                             |
 | WorkType          | اختيار واحد                          | `رسالة علمية`، `بحث تكميلي`، `غير محدد`                          |
 | Year              | رقم بلا كسور                         | 1300–1600 هجريًا أو 1900–2200 ميلاديًا، بحسب YearCalendar        |
-| YearCalendar      | اختيار أو نص                         | `hijri` أو `gregorian`؛ لا يُحوّل 1447 إلى سنة ميلادية          |
+| YearCalendar      | اختيار أو نص                         | `hijri` أو `gregorian`؛ لا يُحوّل 1447 إلى سنة ميلادية           |
 | CoSupervisorName  | نص                                   | مشرف مشارك اختياري                                               |
 | Specialization    | نص                                   | التخصص كما ورد في المصدر                                         |
 | AcademicStatus    | اختيار واحد                          | `مسجل`، `قيد الإعداد`، `مكتمل`، `غير محدد`                       |
