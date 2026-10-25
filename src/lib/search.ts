@@ -12,6 +12,8 @@ export type Filters = {
   query?: string;
   department?: string;
   degree?: string;
+  specialization?: string;
+  fileStatus?: string;
   status?: string;
   access?: string;
   year?: string;
@@ -50,6 +52,9 @@ export function filterTheses(theses: Thesis[], filters: Filters) {
         terms.every((term) => haystack.includes(term)) &&
         (!filters.department || t.department === filters.department) &&
         (!filters.degree || t.degree === filters.degree) &&
+        (!filters.specialization ||
+          t.specialization === filters.specialization) &&
+        (!filters.fileStatus || t.fileStatus === filters.fileStatus) &&
         (!filters.status || t.status === filters.status) &&
         (!filters.access || t.access === filters.access) &&
         (!filters.year ||

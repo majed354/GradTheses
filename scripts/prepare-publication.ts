@@ -30,6 +30,7 @@ const allowed = [
   "PublicationStatus",
   "ReadingUrl",
   "DownloadBlocked",
+  "FileStatus",
 ];
 const publication = parsePublication({
   schemaVersion: 1,

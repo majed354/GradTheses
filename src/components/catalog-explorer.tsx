@@ -20,6 +20,8 @@ export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
     query: params.get("q") || "",
     department: params.get("department") || "",
     degree: params.get("degree") || "",
+    specialization: params.get("specialization") || "",
+    fileStatus: params.get("fileStatus") || "",
     status: params.get("status") || "",
     access: params.get("access") || "",
     year: params.get("year") || "",
@@ -72,7 +74,12 @@ export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
           ...new Set(theses.map((t) => t.department)),
         ])}
         {field("degree", "الدرجة العلمية", ["ماجستير", "دكتوراه"])}
-        {field("status", "الحالة الأكاديمية", [
+        {field("specialization", "التخصص", [
+          ...new Set(
+            theses.flatMap((t) => (t.specialization ? [t.specialization] : [])),
+          ),
+        ])}
+        {field("status", "حالة العمل", [
           "مكتمل",
           "قيد الإعداد",
           "مسجل",

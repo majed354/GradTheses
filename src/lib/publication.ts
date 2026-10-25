@@ -27,6 +27,12 @@ export function parsePublication(value: unknown): Publication {
     if (ids.has(t.id)) throw new Error("Duplicate publication ID");
     ids.add(t.id);
     if (
+      t.access === "university" &&
+      t.fileStatus &&
+      t.fileStatus !== "available"
+    )
+      throw new Error("An incomplete file cannot be released for reading");
+    if (
       canRead(t) &&
       (row.DownloadBlocked !== true ||
         !safeReadingUrl(row.ReadingUrl, "taifedusa.sharepoint.com"))

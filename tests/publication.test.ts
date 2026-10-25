@@ -19,7 +19,7 @@ const row = {
   PublicationStatus: "Published",
   SourceRecordId: "private-source-id",
 };
-const bundle = (rows = [row]) => ({
+const bundle = (rows: Record<string, unknown>[] = [row]) => ({
   schemaVersion: 1,
   publishedAt: "2026-10-26T00:00:00Z",
   rows,
@@ -58,6 +58,10 @@ test("Published reading cannot be activated without a verified link on the unive
       parsePublication(bundle([{ ...readable, ...changes }])),
     );
   assert.throws(() => parsePublication(bundle([row, row])));
+  for (const FileStatus of ["partial", "processing"])
+    assert.throws(() =>
+      parsePublication(bundle([{ ...readable, FileStatus }])),
+    );
   assert.throws(() =>
     parsePublication(bundle([{ ...row, PublicationStatus: "Draft" }])),
   );

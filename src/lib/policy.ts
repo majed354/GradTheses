@@ -43,7 +43,13 @@ export function safeReadingUrl(value: unknown, host: string | undefined) {
   }
 }
 export function canRead(t: Thesis) {
-  return !t.sample && t.access === "university" && t.status === "مكتمل";
+  return (
+    !t.sample &&
+    t.access === "university" &&
+    t.status === "مكتمل" &&
+    t.fileStatus !== "partial" &&
+    t.fileStatus !== "processing"
+  );
 }
 const text = (v: unknown) => (typeof v === "string" ? v.trim() : "");
 // Explicit allowlist: no spread of Graph fields into public data.
@@ -74,7 +80,7 @@ export function publicRecord(f: Record<string, unknown>): Thesis | null {
     return null;
   if (
     !["ماجستير", "دكتوراه"].includes(degree) ||
-    !["رسالة علمية", "بحث تكميلي", "غير محدد"].includes(kind) ||
+    !["رسالة علمية", "بحث تكميلي", "مشروع بحثي", "غير محدد"].includes(kind) ||
     !["مكتمل", "قيد الإعداد", "مسجل", "غير محدد"].includes(status) ||
     !["university", "metadata", "embargo"].includes(access)
   )
@@ -88,6 +94,9 @@ export function publicRecord(f: Record<string, unknown>): Thesis | null {
     department,
     year,
     yearCalendar: calendar as Thesis["yearCalendar"],
+    ...(["processing", "partial", "available"].includes(text(f.FileStatus))
+      ? { fileStatus: text(f.FileStatus) as Thesis["fileStatus"] }
+      : {}),
     ...(text(f.Specialization)
       ? { specialization: text(f.Specialization) }
       : {}),
