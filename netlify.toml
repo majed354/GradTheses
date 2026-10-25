@@ -5,6 +5,11 @@
 [build.environment]
   NODE_VERSION = "24"
 
+# Explicitly enable the current OpenNext runtime for API-created sites.
+# Leave the version unpinned so Netlify installs the current adapter.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
 [context.deploy-preview.environment]
   CATALOG_SOURCE = "demo"
   READING_ENABLED = "false"
