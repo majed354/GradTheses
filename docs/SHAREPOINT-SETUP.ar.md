@@ -135,7 +135,7 @@ Set-SPOSite -Identity https://YOUR-TENANT.sharepoint.com/sites/GradThesesReading
 
 ## 7. متغيرات Netlify
 
-Project configuration > Environment variables. النطاق **Builds + Functions**، والسياق **Production**؛ ضع الأسرار كقيم حساسة. لا تمكّنها للمعاينات غير الموثوقة. أعد النشر بعد التغيير.
+Project configuration > Environment variables. اختر النطاق **Builds + Functions** إذا كانت الخطة تسمح بتحديد النطاقات؛ في خطة Free يكون الخيار **All scopes**. اختر السياق **Production** للأسرار، وضعها كقيم حساسة. لا تمكّنها للمعاينات غير الموثوقة. أعد النشر بعد التغيير.
 
 | المتغير                    | القيمة                                                                          |
 | -------------------------- | ------------------------------------------------------------------------------- |
