@@ -27,9 +27,10 @@ export function ThesisCard({ thesis: t }: { thesis: Thesis }) {
   return (
     <article className="thesis-card">
       <div className="card-top">
-        <span className="department-label">{t.department}</span>
+        <span className="department-label">قسم {t.department}</span>
         <span className="degree-label">{t.degree}</span>
       </div>
+      {t.program && <p className="card-program">{t.program}</p>}
       <h3>
         <Link href={`/theses/${t.id}`}>{t.title}</Link>
       </h3>

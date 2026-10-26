@@ -55,12 +55,22 @@ const text = (v: unknown) => (typeof v === "string" ? v.trim() : "");
 // Explicit allowlist: no spread of Graph fields into public data.
 export function publicRecord(f: Record<string, unknown>): Thesis | null {
   if (f.PublicationStatus !== "Published") return null;
+  if (
+    f.Year !== null &&
+    f.Year !== undefined &&
+    typeof f.Year !== "string" &&
+    typeof f.Year !== "number"
+  )
+    return null;
   const id = text(f.ThesisId),
     title = text(f.Title),
     author = text(f.AuthorName),
     supervisor = text(f.SupervisorName),
     department = text(f.Department);
-  const year = Number(f.Year),
+  const year =
+      f.Year === null || f.Year === undefined || f.Year === ""
+        ? null
+        : Number(f.Year),
     calendar = text(f.YearCalendar) || "gregorian",
     degree = text(f.Degree),
     kind = text(f.WorkType),
@@ -71,11 +81,12 @@ export function publicRecord(f: Record<string, unknown>): Thesis | null {
     !title ||
     !author ||
     !department ||
-    !Number.isInteger(year) ||
+    (year !== null && !Number.isInteger(year)) ||
     !["hijri", "gregorian"].includes(calendar) ||
-    (calendar === "hijri"
-      ? year < 1300 || year > 1600
-      : year < 1900 || year > 2200)
+    (year !== null &&
+      (calendar === "hijri"
+        ? year < 1300 || year > 1600
+        : year < 1900 || year > 2200))
   )
     return null;
   if (
@@ -84,6 +95,9 @@ export function publicRecord(f: Record<string, unknown>): Thesis | null {
     !["مكتمل", "قيد الإعداد", "مسجل", "غير محدد"].includes(status) ||
     !["university", "metadata", "embargo"].includes(access)
   )
+    return null;
+  const program = text(f.ProgramName);
+  if (program && (program.length > 160 || !program.startsWith(degree + " ")))
     return null;
   const pages = Number(f.PageCount);
   return {
@@ -94,6 +108,10 @@ export function publicRecord(f: Record<string, unknown>): Thesis | null {
     department,
     year,
     yearCalendar: calendar as Thesis["yearCalendar"],
+    ...(program ? { program } : {}),
+    ...(text(f.PublicSourceNote)
+      ? { sourceNote: text(f.PublicSourceNote).slice(0, 500) }
+      : {}),
     ...(["processing", "partial", "available"].includes(text(f.FileStatus))
       ? { fileStatus: text(f.FileStatus) as Thesis["fileStatus"] }
       : {}),

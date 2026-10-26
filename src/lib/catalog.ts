@@ -55,7 +55,7 @@ async function graphRows(): Promise<Record<string, unknown>[]> {
   if (!SHAREPOINT_SITE_ID || !SHAREPOINT_CATALOG_LIST_ID)
     throw new Error("Catalog configuration missing");
   const fields =
-    "ThesisId,Title,AuthorName,SupervisorName,CoSupervisorName,Department,Specialization,Degree,WorkType,Year,YearCalendar,AcademicStatus,AbstractText,AbstractKind,KeywordsText,PageCount,AccessLevel,EmbargoUntil,PublicationStatus,ReadingUrl";
+    "ThesisId,Title,AuthorName,SupervisorName,CoSupervisorName,Department,Specialization,ProgramName,PublicSourceNote,Degree,WorkType,Year,YearCalendar,AcademicStatus,AbstractText,AbstractKind,KeywordsText,PageCount,AccessLevel,EmbargoUntil,PublicationStatus,ReadingUrl";
   const initial = new URL(
     `https://graph.microsoft.com/v1.0/sites/${encodeURIComponent(SHAREPOINT_SITE_ID)}/lists/${encodeURIComponent(SHAREPOINT_CATALOG_LIST_ID)}/items`,
   );

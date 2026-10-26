@@ -46,7 +46,11 @@ export default async function ThesisPage({
     );
   if (!t) notFound();
   const related = catalog.theses
-    .filter((x) => x.department === t.department && x.id !== t.id)
+    .filter(
+      (x) =>
+        (t.program ? x.program === t.program : x.department === t.department) &&
+        x.id !== t.id,
+    )
     .slice(0, 3);
   return (
     <main id="main">
@@ -63,7 +67,7 @@ export default async function ThesisPage({
       <div className="container detail-layout">
         <article className="detail-main">
           <div className="detail-labels">
-            <span className="department-label">{t.department}</span>
+            <span className="department-label">قسم {t.department}</span>
             <span className="degree-label">{t.degree}</span>
             <span className="status-label">{t.status}</span>
           </div>
@@ -75,6 +79,7 @@ export default async function ThesisPage({
             <span>بإشراف: {t.supervisor || "غير محدد"}</span>
           </div>
           <div className="detail-facts">
+            {t.program && <span>البرنامج: {t.program}</span>}
             {t.specialization && <span>التخصص: {t.specialization}</span>}
             <span>
               <CalendarDays size={17} />
@@ -91,6 +96,7 @@ export default async function ThesisPage({
               </span>
             )}
           </div>
+          {t.sourceNote && <p className="notice">{t.sourceNote}</p>}
           <section className="abstract-section">
             <h2>
               {t.abstractKind === "editorial"
@@ -159,7 +165,7 @@ export default async function ThesisPage({
       {related.length > 0 && (
         <section className="container section">
           <div className="section-heading">
-            <h2>من القسم نفسه</h2>
+            <h2>{t.program ? "من البرنامج نفسه" : "من القسم نفسه"}</h2>
           </div>
           <div className="thesis-grid home-grid">
             {related.map((x) => (

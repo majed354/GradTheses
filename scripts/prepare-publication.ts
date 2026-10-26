@@ -17,6 +17,8 @@ const allowed = [
   "CoSupervisorName",
   "Department",
   "Specialization",
+  "ProgramName",
+  "PublicSourceNote",
   "Degree",
   "WorkType",
   "Year",

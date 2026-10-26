@@ -178,7 +178,7 @@ export default async function Home() {
           </div>
           <div className="thesis-grid home-grid">
             {[...theses]
-              .sort((a, b) => b.year - a.year)
+              .sort((a, b) => (b.year ?? -Infinity) - (a.year ?? -Infinity))
               .slice(0, 3)
               .map((t) => (
                 <ThesisCard key={t.id} thesis={t} />

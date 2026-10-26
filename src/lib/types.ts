@@ -16,9 +16,11 @@ export type Thesis = {
   department: string;
   degree: "ماجستير" | "دكتوراه";
   kind: "رسالة علمية" | "بحث تكميلي" | "مشروع بحثي" | "غير محدد";
-  year: number;
+  year: number | null;
   yearCalendar?: "hijri" | "gregorian";
   specialization?: string;
+  program?: string;
+  sourceNote?: string;
   coSupervisor?: string;
   fileStatus?: "processing" | "partial" | "available";
   status: "مكتمل" | "قيد الإعداد" | "مسجل" | "غير محدد";
