@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import {
   ArrowLeft,
   BookOpen,
@@ -9,7 +9,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { readingEnabled } from "@/lib/config";
-import { getCatalog } from "@/lib/catalog";
+import { getCatalog, getMergedThesisId } from "@/lib/catalog";
 import { citation, yearLabel, workLabel } from "@/lib/search";
 import { Breadcrumb, DemoNotice } from "@/components/site";
 import { AccessBadge, ThesisCard } from "@/components/thesis-card";
@@ -21,8 +21,12 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const catalog = await getCatalog(),
-    t = catalog.theses.find((t) => t.id === id);
+  const catalog = await getCatalog();
+  let t = catalog.theses.find((t) => t.id === id);
+  if (!t && catalog.available) {
+    const canonicalId = await getMergedThesisId(id);
+    t = catalog.theses.find((t) => t.id === canonicalId);
+  }
   return {
     title: t?.title || "تفاصيل السجل",
     ...(t?.sample ? { robots: { index: false, follow: false } } : {}),
@@ -44,7 +48,11 @@ export default async function ThesisPage({
         <Link href="/catalog">العودة للفهرس</Link>
       </main>
     );
-  if (!t) notFound();
+  if (!t) {
+    const canonicalId = await getMergedThesisId(id);
+    if (canonicalId) permanentRedirect(`/theses/${canonicalId}`);
+    notFound();
+  }
   const related = catalog.theses
     .filter(
       (x) =>

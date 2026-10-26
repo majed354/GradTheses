@@ -24,6 +24,32 @@ const bundle = (rows: Record<string, unknown>[] = [row]) => ({
   publishedAt: "2026-10-26T00:00:00Z",
   rows,
 });
+test("Merged aliases preserve old IDs without adding a second published work", () => {
+  const p = parsePublication({ ...bundle(), aliases: { "gt-old": "gt-0001" } });
+  assert.equal(p.aliases?.["gt-old"], "gt-0001");
+  assert.equal(p.rows.length, 1);
+  assert.equal(parsePublication(bundle()).aliases, undefined);
+  const publicData = publicRecord({
+    ...p.rows[0],
+    MergedIntoThesisId: "private",
+  });
+  assert.ok(!JSON.stringify(publicData).includes("MergedIntoThesisId"));
+});
+test("Publication aliases reject unsafe targets, shadowing, dangling IDs and chains", () => {
+  for (const aliases of [
+    null,
+    [],
+    "gt-0001",
+    { "gt-0001": "gt-0001" },
+    { "gt-old": "gt-missing" },
+    { "gt-old": "//example.com" },
+    { "../old": "gt-0001" },
+    { "gt-old": 1 },
+    { "gt-old": "gt-other", "gt-other": "gt-0001" },
+    { "gt-old": "gt-other", "gt-other": "gt-old" },
+  ])
+    assert.throws(() => parsePublication({ ...bundle(), aliases }));
+});
 test("Hijri metadata survives publication without inventing a file, type or supervisor", () => {
   const t = publicRecord(parsePublication(bundle()).rows[0])!;
   assert.equal(t.year, 1447);

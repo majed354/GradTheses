@@ -5,6 +5,7 @@ export type Publication = {
   schemaVersion: 1;
   publishedAt: string;
   rows: Record<string, unknown>[];
+  aliases?: Record<string, string>;
 };
 export function parsePublication(value: unknown): Publication {
   if (!value || typeof value !== "object")
@@ -38,6 +39,24 @@ export function parsePublication(value: unknown): Publication {
         !safeReadingUrl(row.ReadingUrl, "taifedusa.sharepoint.com"))
     )
       throw new Error("Reading requires a verified blocked-download link");
+  }
+  if (p.aliases !== undefined) {
+    if (!p.aliases || typeof p.aliases !== "object" || Array.isArray(p.aliases))
+      throw new Error("Invalid publication aliases");
+    const entries = Object.entries(p.aliases);
+    if (entries.length > 10000) throw new Error("Too many publication aliases");
+    for (const [alias, target] of entries) {
+      if (
+        !/^[a-zA-Z0-9_-]{1,100}$/.test(alias) ||
+        typeof target !== "string" ||
+        !/^[a-zA-Z0-9_-]{1,100}$/.test(target) ||
+        ids.has(alias) ||
+        !ids.has(target)
+      )
+        throw new Error(
+          "Aliases must point directly to a published canonical ID",
+        );
+    }
   }
   return p as Publication;
 }

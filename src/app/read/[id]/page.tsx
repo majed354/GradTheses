@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { BookOpen, LockKeyhole, ArrowUpLeft, ShieldCheck } from "lucide-react";
-import { getCatalog } from "@/lib/catalog";
+import { getCatalog, getMergedThesisId } from "@/lib/catalog";
 import { readingEnabled, nativeSharePointAuth } from "@/lib/config";
 import { getSession } from "@/lib/auth";
 import { Breadcrumb } from "@/components/site";
@@ -28,7 +28,11 @@ export default async function ReadPage({
         <Link href="/catalog">العودة إلى الفهرس</Link>
       </main>
     );
-  if (!t) notFound();
+  if (!t) {
+    const canonicalId = await getMergedThesisId(id);
+    if (canonicalId) permanentRedirect(`/read/${canonicalId}`);
+    notFound();
+  }
   const enabled = readingEnabled(),
     session = await getSession(),
     eligible = !t.sample && t.access === "university" && t.status === "مكتمل";

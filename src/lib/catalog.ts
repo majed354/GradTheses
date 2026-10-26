@@ -130,6 +130,15 @@ export async function getCatalog(): Promise<Catalog> {
     return { theses: [], source: "sharepoint", available: false };
   }
 }
+export async function getMergedThesisId(id: string): Promise<string | null> {
+  if (process.env.CATALOG_SOURCE !== "published") return null;
+  try {
+    const { aliases } = await publishedRows();
+    return aliases && Object.hasOwn(aliases, id) ? aliases[id] : null;
+  } catch {
+    return null;
+  }
+}
 export async function getReadingLink(id: string) {
   if (process.env.CATALOG_SOURCE === "published") {
     const row = (await publishedRows()).rows.find((r) => r.ThesisId === id);
