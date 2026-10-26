@@ -30,14 +30,25 @@ export default async function Account({
         <LockKeyhole size={32} />
       </div>
       <h1>الدخول الجامعي</h1>
-      <p>الفهرس متاح للجميع. تتطلب قراءة النصوص حسابًا جامعيًا مصرحًا له.</p>
+      <p>الفهرس والملخصات المعتمدة متاحة للجميع دون تسجيل الدخول.</p>
       {notice && messages[notice] && (
         <div className="notice account-notice" role="status">
           {messages[notice]}
         </div>
       )}
       <div className="state-panel">
-        {nativeSharePointAuth() ? (
+        {!enabled ? (
+          <>
+            <h2>إتاحة البيانات والملخصات</h2>
+            <p>
+              أُوقفت إتاحة النصوص الكاملة مؤقتًا إلى حين استكمال مراجعة حقوق
+              النشر والأساس النظامي للإتاحة.
+            </p>
+            <Link href="/catalog" className="button button-primary">
+              استعراض الفهرس
+            </Link>
+          </>
+        ) : nativeSharePointAuth() ? (
           <>
             <h2>الدخول عبر قارئ الجامعة</h2>
             <p>

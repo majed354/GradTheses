@@ -8,6 +8,7 @@ import {
   LockKeyhole,
   UserRound,
 } from "lucide-react";
+import { readingEnabled } from "@/lib/config";
 import { getCatalog } from "@/lib/catalog";
 import { citation, yearLabel, workLabel } from "@/lib/search";
 import { Breadcrumb, DemoNotice } from "@/components/site";
@@ -91,8 +92,18 @@ export default async function ThesisPage({
             )}
           </div>
           <section className="abstract-section">
-            <h2>المستخلص</h2>
-            <p>{t.abstract || "لم يُضف مستخلص لهذا السجل بعد."}</p>
+            <h2>
+              {t.abstractKind === "editorial"
+                ? "ملخص تعريفي من إعداد المنصة"
+                : "الملخص"}
+            </h2>
+            <p>{t.abstract || "لم يُعتمد ملخص لهذا السجل بعد."}</p>
+            {t.abstractKind === "editorial" && (
+              <small className="sample-caption">
+                صياغة تعريفية أعدّتها المنصة بعد مراجعة الملف، ولا تحل محل قراءة
+                العمل أو تمثل نص ملخص المؤلف.
+              </small>
+            )}
           </section>
           <section className="keywords-section">
             <h2>الكلمات المفتاحية</h2>
@@ -119,24 +130,16 @@ export default async function ThesisPage({
           <div className="reading-icon">
             <BookOpen size={33} strokeWidth={1.4} />
           </div>
-          <h2>
-            {t.access === "metadata"
-              ? "بيانات الموضوع متاحة"
-              : "قراءة النص الكامل"}
-          </h2>
+          <h2>البيانات والملخصات</h2>
           <AccessBadge thesis={t} />
           <p>
-            {t.access === "metadata"
-              ? t.fileStatus === "partial"
-                ? "النسخة المستلمة جزئية. يضاف النص الكامل بعد استكمالها ومراجعتها."
-                : t.fileStatus === "processing"
-                  ? "وصلت نسخة هذا العمل، ونجري تجهيزها للقراءة الجامعية."
-                  : "هذا الموضوع متاح ببياناته فقط. يضاف النص الكامل بعد اكتماله واعتماد إتاحته."
-              : t.access === "embargo"
-                ? `النص الكامل مؤجل الإتاحة${t.embargoUntil ? " حتى " + t.embargoUntil : ""}. لا يفتح تلقائيًا قبل اعتماد النشر.`
-                : "تتاح قراءة الرسالة للمصرح لهم بالحساب الجامعي، من خلال القارئ المحمي في خدمات الجامعة."}
+            تقتصر الإتاحة حاليًا على البيانات والملخصات المعتمدة إلى حين استكمال
+            مراجعة حقوق النشر. النص الكامل غير متاح عبر المنصة.
           </p>
-          {t.access === "university" && (
+          {t.fileStatus === "partial" && (
+            <p>النسخة المستلمة جزئية؛ يقتصر التوصيف على المحتوى المتاح منها.</p>
+          )}
+          {readingEnabled() && t.access === "university" && (
             <Link href={`/read/${t.id}`} className="button button-primary">
               <LockKeyhole size={16} />{" "}
               {t.sample ? "استعراض مسار القراءة" : "قراءة الرسالة"}

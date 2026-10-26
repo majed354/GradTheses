@@ -128,7 +128,7 @@ export default async function Home() {
           <p>
             بيانات متاحة للجميع
             <br />
-            <strong>ونصوص بقراءة جامعية</strong>
+            <strong>وملخصات علمية مراجعة</strong>
           </p>
         </div>
       </section>
@@ -198,14 +198,14 @@ export default async function Home() {
           <LockKeyhole size={29} />
         </div>
         <div>
-          <h2>استكشف المعرفة. واقرأ بحسابك الجامعي.</h2>
+          <h2>اكتشف البحوث وتعرّف على موضوعاتها.</h2>
           <p>
-            بيانات البحوث متاحة للجميع، وقراءة النص الكامل للمصرح لهم عبر خدمات
-            الجامعة.
+            بيانات البحوث والملخصات المعتمدة متاحة للجميع. تُراجع التوصيفات قبل
+            إضافتها إلى الفهرس.
           </p>
         </div>
         <Link href="/access" className="button button-outline">
-          تعرّف على آلية القراءة <ArrowUpLeft size={17} />
+          تعرّف على سياسة الإتاحة <ArrowUpLeft size={17} />
         </Link>
       </section>
     </main>

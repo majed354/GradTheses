@@ -23,6 +23,7 @@ export type Thesis = {
   fileStatus?: "processing" | "partial" | "available";
   status: "مكتمل" | "قيد الإعداد" | "مسجل" | "غير محدد";
   abstract: string;
+  abstractKind?: "editorial" | "author";
   keywords: string[];
   pages?: number;
   access: Access;

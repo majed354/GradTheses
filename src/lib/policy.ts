@@ -108,6 +108,9 @@ export function publicRecord(f: Record<string, unknown>): Thesis | null {
     status: status as Thesis["status"],
     access: access as Thesis["access"],
     abstract: text(f.AbstractText),
+    ...(["editorial", "author"].includes(text(f.AbstractKind))
+      ? { abstractKind: text(f.AbstractKind) as Thesis["abstractKind"] }
+      : {}),
     keywords: text(f.KeywordsText)
       .split(/[;؛]/)
       .map((t) => t.trim())

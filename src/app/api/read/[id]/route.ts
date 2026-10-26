@@ -12,7 +12,7 @@ export async function GET(
   };
   if (!readingEnabled())
     return Response.json(
-      { error: "مسار القراءة الجامعية قيد التجهيز." },
+      { error: "النصوص الكاملة غير متاحة حاليًا." },
       { status: 503, headers },
     );
   // Native mode delegates authentication and ACL enforcement to SharePoint.

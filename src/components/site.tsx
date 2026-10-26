@@ -16,7 +16,7 @@ export function Header() {
             الشريعة والأنظمة
           </span>
           <span className="utility-left">
-            <ShieldCheck size={14} /> فهرس عام · قراءة جامعية
+            <ShieldCheck size={14} /> فهرس عام · ملخصات علمية
           </span>
         </div>
       </div>
@@ -43,9 +43,9 @@ export function Header() {
             <Link href="/catalog?status=قيد الإعداد">أعمال قيد الإعداد</Link>
             <Link href="/about">عن المنصة</Link>
           </nav>
-          <Link href="/account" className="button button-outline header-login">
+          <Link href="/access" className="button button-outline header-login">
             <LockKeyhole size={16} />
-            <span>الدخول الجامعي</span>
+            <span>سياسة الإتاحة</span>
           </Link>
         </div>
       </header>
@@ -70,7 +70,7 @@ export function Footer() {
           <Link href="/catalog">الفهرس العلمي</Link>
           <Link href="/access">سياسة القراءة والإتاحة</Link>
           <Link href="/setup">
-            تجهيز الربط الجامعي <ArrowUpLeft size={14} />
+            دليل الإيداع والمراجعة <ArrowUpLeft size={14} />
           </Link>
         </div>
         <GraduationCap className="footer-seal" size={78} strokeWidth={0.7} />
@@ -109,7 +109,7 @@ export function DemoNotice({
         calendar: "gregory",
         timeZone: "Asia/Riyadh",
       }).format(new Date(publishedAt))}
-      . تُضاف النصوص الكاملة تدريجيًا بعد اعتمادها.
+      . تُضاف الملخصات والتوصيفات تدريجيًا بعد مراجعتها.
     </div>
   ) : null;
 }

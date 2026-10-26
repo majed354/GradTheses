@@ -11,7 +11,7 @@ import {
   ArrowLeft,
   ArrowRight,
 } from "lucide-react";
-import { filterTheses, yearLabel, type Filters } from "@/lib/search";
+import { filterTheses, yearLabel, workLabel, type Filters } from "@/lib/search";
 import { ThesisCard, AccessBadge } from "./thesis-card";
 import type { Thesis } from "@/lib/types";
 export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
@@ -20,6 +20,7 @@ export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
     query: params.get("q") || "",
     department: params.get("department") || "",
     degree: params.get("degree") || "",
+    kind: params.get("kind") || "",
     specialization: params.get("specialization") || "",
     fileStatus: params.get("fileStatus") || "",
     status: params.get("status") || "",
@@ -74,6 +75,12 @@ export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
           ...new Set(theses.map((t) => t.department)),
         ])}
         {field("degree", "الدرجة العلمية", ["ماجستير", "دكتوراه"])}
+        {field("kind", "نوع العمل الموثق", [
+          "مشروع بحثي",
+          "رسالة علمية",
+          "بحث تكميلي",
+          "غير محدد",
+        ])}
         {field("specialization", "التخصص", [
           ...new Set(
             theses.flatMap((t) => (t.specialization ? [t.specialization] : [])),
@@ -90,20 +97,9 @@ export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
           "السنة",
           [...new Set(theses.map(yearLabel))].sort().reverse(),
         )}
-        <label className="filter-field">
-          إتاحة النص
-          <select
-            value={filters.access || ""}
-            onChange={(e) => update({ ...filters, access: e.target.value })}
-          >
-            <option value="">جميع حالات الإتاحة</option>
-            <option value="university">قراءة بالحساب الجامعي</option>
-            <option value="metadata">بيانات الموضوع فقط</option>
-            <option value="embargo">إتاحة مؤجلة</option>
-          </select>
-        </label>
         <div className="filter-tip">
-          يمكن استعراض بيانات جميع السجلات المنشورة دون تسجيل الدخول.
+          تتاح البيانات والملخصات المعتمدة للجميع. لا يُحدد نوع العمل من الدرجة
+          وحدها.
         </div>
       </aside>
       <section className="catalog-results" aria-label="نتائج البحث">
@@ -199,7 +195,7 @@ export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
                 <tr>
                   <th>العنوان والباحث</th>
                   <th>القسم</th>
-                  <th>الدرجة</th>
+                  <th>الدرجة ونوع العمل</th>
                   <th>السنة</th>
                   <th>الإتاحة</th>
                 </tr>
@@ -212,7 +208,7 @@ export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
                       <small>{t.author}</small>
                     </td>
                     <td>{t.department}</td>
-                    <td>{t.degree}</td>
+                    <td>{workLabel(t)}</td>
                     <td>{yearLabel(t)}</td>
                     <td>
                       <AccessBadge thesis={t} />

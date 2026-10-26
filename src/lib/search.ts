@@ -12,6 +12,7 @@ export type Filters = {
   query?: string;
   department?: string;
   degree?: string;
+  kind?: string;
   specialization?: string;
   fileStatus?: string;
   status?: string;
@@ -23,7 +24,9 @@ export function yearLabel(t: Thesis) {
   return `${t.year} ${t.yearCalendar === "hijri" ? "هـ" : "م"}`;
 }
 export function workLabel(t: Thesis) {
-  return t.kind === "غير محدد" ? "عمل بحثي" : t.kind;
+  if (t.kind === "غير محدد") return `${t.degree} · نوع العمل غير موثق`;
+  if (t.kind === "رسالة علمية") return `رسالة ${t.degree}`;
+  return `${t.kind} لل${t.degree}`;
 }
 // Used only for ordering mixed-calendar year records, never as a date conversion.
 const yearOrder = (t: Thesis) =>
@@ -52,6 +55,7 @@ export function filterTheses(theses: Thesis[], filters: Filters) {
         terms.every((term) => haystack.includes(term)) &&
         (!filters.department || t.department === filters.department) &&
         (!filters.degree || t.degree === filters.degree) &&
+        (!filters.kind || t.kind === filters.kind) &&
         (!filters.specialization ||
           t.specialization === filters.specialization) &&
         (!filters.fileStatus || t.fileStatus === filters.fileStatus) &&
@@ -71,5 +75,5 @@ export function filterTheses(theses: Thesis[], filters: Filters) {
     );
 }
 export function citation(t: Thesis) {
-  return `${t.author}. (${yearLabel(t)}). ${t.title} [${workLabel(t)}، ${t.degree}]. كلية الشريعة والأنظمة، جامعة الطائف.`;
+  return `${t.author}. (${yearLabel(t)}). ${t.title} [${workLabel(t)}]. كلية الشريعة والأنظمة، جامعة الطائف.`;
 }

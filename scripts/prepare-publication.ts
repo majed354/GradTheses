@@ -23,6 +23,7 @@ const allowed = [
   "YearCalendar",
   "AcademicStatus",
   "AbstractText",
+  "AbstractKind",
   "KeywordsText",
   "PageCount",
   "AccessLevel",
