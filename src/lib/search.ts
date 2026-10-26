@@ -98,6 +98,30 @@ export function catalogSearchParams(
   if (view === "table") params.set("view", view);
   return params;
 }
+// Each control supplies only its own change. Reading the latest URL here avoids
+// restoring filters from an earlier render when consecutive events run together.
+export function patchCatalogSearchParams(
+  current: URLSearchParams,
+  patch: Filters,
+  options: { reset?: boolean; page?: number; view?: "grid" | "table" } = {},
+) {
+  const latest = readCatalogFilters(
+    options.reset ? new URLSearchParams() : current,
+  );
+  const hasFilterChange = catalogueFilterKeys.some((key) => key in patch);
+  const requestedPage = Number(current.get("page"));
+  const currentPage =
+    Number.isInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+  return catalogSearchParams(
+    { ...latest, ...patch },
+    {
+      view:
+        options.view ?? (current.get("view") === "table" ? "table" : "grid"),
+      page:
+        options.page ?? (options.reset || hasFilterChange ? 1 : currentPage),
+    },
+  );
+}
 export function yearLabel(t: Thesis) {
   if (t.year === null) return "السنة غير موثقة";
   return `${t.year} ${t.yearCalendar === "hijri" ? "هـ" : "م"}`;

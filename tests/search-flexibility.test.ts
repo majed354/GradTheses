@@ -6,6 +6,7 @@ import {
   citation,
   filterTheses,
   normalizeArabic,
+  patchCatalogSearchParams,
   readCatalogFilters,
   yearLabel,
 } from "../src/lib/search";
@@ -266,4 +267,53 @@ test("Shared search URLs preserve visible options, table view and page, and disc
     "all",
   );
   assert.equal(catalogSearchParams({ sort: "relevance" }).size, 0);
+});
+
+test("Clearing the query then selecting a programme before rerender never restores the old query", () => {
+  const renderedFilters = readCatalogFilters(
+    new URLSearchParams("q=تصنيف الاختلافات&view=table&page=3"),
+  );
+  let currentURL = patchCatalogSearchParams(
+    new URLSearchParams("q=تصنيف الاختلافات&view=table&page=3"),
+    { query: "" },
+  );
+  // The programme control can still belong to the old render, but sends only
+  // the changed programme instead of spreading that old render's filters.
+  assert.equal(renderedFilters.query, "تصنيف الاختلافات");
+  currentURL = patchCatalogSearchParams(currentURL, { program: quranMasters });
+  assert.equal(currentURL.has("q"), false);
+  assert.equal(currentURL.get("program"), quranMasters);
+  assert.equal(currentURL.get("view"), "table");
+  assert.equal(currentURL.has("page"), false);
+  const rows = [
+    record("classified"),
+    record("another-topic", {
+      title: "مناهج دراسة القرآن",
+      abstract: "",
+      keywords: [],
+    }),
+    record("other-programme", { program: readingsMasters }),
+  ];
+  assert.equal(filterTheses(rows, readCatalogFilters(currentURL)).length, 2);
+});
+
+test("Atomic control patches preserve rapid changes and display state while an explicit reset clears every filter", () => {
+  let currentURL = new URLSearchParams(
+    "view=table&page=4&access=university&fileStatus=processing",
+  );
+  currentURL = patchCatalogSearchParams(currentURL, { query: "ابن الجوزي" });
+  currentURL = patchCatalogSearchParams(currentURL, { scope: "title" });
+  currentURL = patchCatalogSearchParams(currentURL, { program: quranMasters });
+  assert.equal(currentURL.get("q"), "ابن الجوزي");
+  assert.equal(currentURL.get("scope"), "title");
+  currentURL = patchCatalogSearchParams(currentURL, { query: "" });
+  assert.equal(currentURL.has("q"), false);
+  assert.equal(currentURL.get("program"), quranMasters);
+  currentURL = patchCatalogSearchParams(currentURL, {}, { page: 2 });
+  currentURL = patchCatalogSearchParams(currentURL, {}, { view: "grid" });
+  assert.equal(currentURL.get("page"), "2");
+  assert.equal(currentURL.has("view"), false);
+  assert.equal(currentURL.get("program"), quranMasters);
+  currentURL = patchCatalogSearchParams(currentURL, {}, { reset: true });
+  assert.equal(currentURL.size, 0);
 });

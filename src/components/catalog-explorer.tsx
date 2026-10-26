@@ -11,7 +11,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import {
-  catalogSearchParams,
+  patchCatalogSearchParams,
   filterTheses,
   readCatalogFilters,
   yearLabel,
@@ -34,10 +34,14 @@ export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
     current = Math.min(page, pages),
     visible = results.slice((current - 1) * 6, current * 6);
   const update = (
-    next: Filters,
-    display: { page?: number; view?: "grid" | "table" } = {},
+    patch: Filters,
+    display: { reset?: boolean; page?: number; view?: "grid" | "table" } = {},
   ) => {
-    const p = catalogSearchParams(next, { view, ...display });
+    const p = patchCatalogSearchParams(
+      new URLSearchParams(window.location.search),
+      patch,
+      display,
+    );
     window.history.replaceState(null, "", `/catalog${p.size ? "?" + p : ""}`);
   };
   const field = (
@@ -58,7 +62,7 @@ export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
         {label}
         <select
           value={filters[key] || ""}
-          onChange={(e) => update({ ...filters, [key]: e.target.value })}
+          onChange={(e) => update({ [key]: e.target.value })}
         >
           <option value="">الكل</option>
           {values.map((option) => (
@@ -117,7 +121,7 @@ export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
             <SlidersHorizontal size={17} /> تخصيص البحث
           </strong>
           <button
-            onClick={() => update({ sort: "relevance" })}
+            onClick={() => update({}, { reset: true })}
             className="text-button"
           >
             مسح الكل
@@ -168,13 +172,13 @@ export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
             aria-label="البحث في الفهرس"
             placeholder="ابحث بالعنوان، الباحث، المشرف، أو الموضوع…"
             value={filters.query || ""}
-            onChange={(e) => update({ ...filters, query: e.target.value })}
+            onChange={(e) => update({ query: e.target.value })}
           />
           {filters.query && (
             <button
               type="button"
               aria-label="مسح البحث"
-              onClick={() => update({ ...filters, query: "" })}
+              onClick={() => update({ query: "" })}
             >
               <X size={18} />
             </button>
@@ -185,9 +189,7 @@ export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
             طريقة المطابقة
             <select
               value={filters.mode}
-              onChange={(e) =>
-                update({ ...filters, mode: e.target.value as SearchMode })
-              }
+              onChange={(e) => update({ mode: e.target.value as SearchMode })}
             >
               {Object.entries(modeLabels).map(([value, label]) => (
                 <option key={value} value={value}>
@@ -200,9 +202,7 @@ export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
             مجال البحث
             <select
               value={filters.scope}
-              onChange={(e) =>
-                update({ ...filters, scope: e.target.value as SearchScope })
-              }
+              onChange={(e) => update({ scope: e.target.value as SearchScope })}
             >
               {Object.entries(scopeLabels).map(([value, label]) => (
                 <option key={value} value={value}>
@@ -228,7 +228,7 @@ export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
             <select
               aria-label="ترتيب النتائج"
               value={filters.sort || "relevance"}
-              onChange={(e) => update({ ...filters, sort: e.target.value })}
+              onChange={(e) => update({ sort: e.target.value })}
             >
               <option value="relevance">الأكثر صلة</option>
               <option value="newest">الأحدث أولًا</option>
@@ -239,16 +239,14 @@ export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
               <button
                 aria-label="عرض البطاقات"
                 aria-pressed={view === "grid"}
-                onClick={() => update(filters, { view: "grid", page: current })}
+                onClick={() => update({}, { view: "grid" })}
               >
                 <LayoutGrid size={18} />
               </button>
               <button
                 aria-label="عرض الجدول"
                 aria-pressed={view === "table"}
-                onClick={() =>
-                  update(filters, { view: "table", page: current })
-                }
+                onClick={() => update({}, { view: "table" })}
               >
                 <List size={18} />
               </button>
@@ -258,7 +256,7 @@ export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
         {active.length > 0 && (
           <div className="active-filters">
             {active.map(([k, v]) => (
-              <button key={k} onClick={() => update({ ...filters, [k]: "" })}>
+              <button key={k} onClick={() => update({ [k]: "" })}>
                 {filterLabels[k]}:{" "}
                 {k === "mode"
                   ? modeLabels[v as SearchMode]
@@ -281,7 +279,7 @@ export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
             <p>جرّب كلمات أقصر أو وسّع خيارات التصفية.</p>
             <button
               className="button button-outline"
-              onClick={() => update({ sort: "relevance" })}
+              onClick={() => update({}, { reset: true })}
             >
               إعادة تعيين البحث
             </button>
@@ -330,7 +328,7 @@ export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
           <nav className="pagination" aria-label="صفحات النتائج">
             <button
               disabled={current <= 1}
-              onClick={() => update(filters, { page: current - 1 })}
+              onClick={() => update({}, { page: current - 1 })}
             >
               <ArrowRight size={16} /> السابق
             </button>
@@ -339,7 +337,7 @@ export function CatalogExplorer({ theses }: { theses: Thesis[] }) {
             </span>
             <button
               disabled={current >= pages}
-              onClick={() => update(filters, { page: current + 1 })}
+              onClick={() => update({}, { page: current + 1 })}
             >
               التالي <ArrowLeft size={16} />
             </button>
